@@ -1,8 +1,11 @@
 # laravel-generic-lib
 A generic library for laravel. Just fork and modify it.
 
-## Getting Started
+- Structure
+ ![alt text](https://i.imgur.com/oRH5uh6.png)
 
+
+## Getting Started
 
 - In root of your Laravel app in the composer.json add this code to clone the project:
 
@@ -79,5 +82,3 @@ And finally, start the application by running:
 ```
 php artisan serve
 ```
-
-Visit http://localhost:8000/contact in your browser to view the demo.
