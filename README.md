@@ -1,7 +1,7 @@
 # laravel-generic-lib
 A generic library for laravel. Just fork and modify it.
 
-- Structure
+# Structure
  ![alt text](https://i.imgur.com/oRH5uh6.png)
 
 
