@@ -1,11 +1,10 @@
-
 <?php
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContactTable extends Migration
+class GenericExample extends Migration
 {
     /**
      * Run the migrations.
@@ -14,13 +13,12 @@ class CreateContactTable extends Migration
      */
     public function up()
     {
-        Schema::create('contact', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('email');
-            $table->text('message');
-            $table->timestamps();
-        });
+        //Migration de exemplo. Foi comentada para nao criar nenhuma tabela/coluna sem necessidade.
+
+        // Schema::create('teste', function(Blueprint $table) {
+        //     $table->increments('id');
+        //     $table->integer('teste');
+        // });
     }
 
     /**
@@ -30,6 +28,6 @@ class CreateContactTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact');
+
     }
 }

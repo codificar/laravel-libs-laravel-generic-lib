@@ -2,36 +2,45 @@
 
 namespace Codificar\Generic\Http\Controllers;
 
-use Codificar\Generic\Models\Generic;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-//FormRequest
-use Codificar\Generic\Http\Requests\ProviderAddGenericFormRequest;
 
-//Resource
-use Codificar\Generic\Http\Resources\ProviderGenericReportResource;
-use Codificar\Generic\Http\Resources\ProviderAddGenericResource;
+// Importar models
+use Codificar\Generic\Models\Generic;
 
-use Input, Validator;
-use Provider, Settings, Ledger, Finance;
+// Importar FormRequest
+use Codificar\Generic\Http\Requests\SaveExampleFormRequest;
+
+// Importar Resource
+use Codificar\Generic\Http\Resources\saveExampleResource;
+
+
+use Input, Validator, View, Response;
+use Provider, Settings, Ledger, Finance, Bank, LedgerBankAccount;
+
 class GenericController extends Controller {
 
-    public function getGenericReport()
-    {
-        // Get the provider id (some projects is 'provider_id' and others is just 'id')
-        $providerId = Input::get('provider_id') ? Input::get('provider_id') : Input::get('id');
-        $provider = Provider::find($providerId);
-        
-        $generic_report = Generic::getGenericSummary($provider->ledger->id, 'provider');
-        
-        // Return data
-		return new ProviderGenericReportResource([
-			'generic_report' => $generic_report
-		]);
+    
+
+    /**
+     * View the generic report
+     * 
+     * @return View
+     */
+    public function getExampleVuejs() {
+
+        $varTeste = "Valor qualquer de teste";
+
+        return View::make('generic::example_vuejs')
+                    ->with([
+                        'teste' => $varTeste
+                    ]);
+    
     }
 
-    public function addWithDraw(ProviderAddGenericFormRequest $request)
+
+    public function saveExample(ProviderAddWithdrawalFormRequest $request)
     {
         // Get the params
         $providerId = $request->get('provider_id');
@@ -54,7 +63,7 @@ class GenericController extends Controller {
         
 
         // Return data
-		return new ProviderAddGenericResource([
+		return new ProviderAddWithdrawalResource([
             'ledger'            => $ledger,
             'withdraw_value'    => $value,
             'bank_account_id'   => $bankAccountId,
@@ -62,6 +71,22 @@ class GenericController extends Controller {
             'withdraw_settings' => $withDrawSettings
 		]);
 
+    }
+
+
+
+    public function getAppApiExample()
+    {
+        // Get the provider id (some projects is 'provider_id' and others is just 'id')
+        $providerId = Input::get('provider_id') ? Input::get('provider_id') : Input::get('id');
+        $provider = Provider::find($providerId);
+        
+        $withdrawals_report = Withdrawals::getWithdrawalsSummary($provider->ledger->id, 'provider');
+        
+        // Return data
+		return new ProviderWithdrawalsReportResource([
+			'withdrawals_report' => $withdrawals_report
+		]);
     }
 
 }

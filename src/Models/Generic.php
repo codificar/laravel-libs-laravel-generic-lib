@@ -8,17 +8,13 @@ use Illuminate\Pagination\Paginator;
 use Carbon\Carbon;
 use Eloquent;
 use Finance;
+use DB;
 
 
 class Generic extends Eloquent
 {
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    // protected $table = 'finance';
+    protected $table = 'withdraw';
 
     /**
      * Indicates if the model should be timestamped.
@@ -31,27 +27,70 @@ class Generic extends Eloquent
     public static function getGenericSummary($ledgerId = null, $enviroment)
     {
 
-        if($enviroment == 'provider') {
-            $genericSummary = Finance::select('ledger_bank_account.*','finance.*', 'finance.id as id', 'bank.name as bank', 'provider.email as provider_email', 'provider.first_name as provider_first_name', 'provider.last_name as provider_last_name')
-                                    ->join('ledger', 'finance.ledger_id', '=', 'ledger.id')
-                                    ->join('provider', 'ledger.provider_id', '=', 'provider.id')
-                                    ->join('ledger_bank_account', 'finance.ledger_bank_account_id', 'ledger_bank_account.id')
-                                    ->join('bank', 'ledger_bank_account.bank_id', 'bank.id')
-                                    ->where('finance.ledger_id', '=', $ledgerId)
-                                    ->where('finance.reason', '=', 'WITHDRAW')
-                                    ->orderBy('finance.id', 'desc')
-                                    ->get();
-        } else if($enviroment == 'user') {
-            $genericSummary = Finance::select('ledger_bank_account.*','finance.*', 'finance.id as id', 'bank.name as bank', 'user.email as user_email', 'user.first_name as user_first_name', 'user.last_name as user_last_name')
-                                    ->join('ledger', 'finance.ledger_id', '=', 'ledger.id')
-                                    ->join('user', 'ledger.user_id', '=', 'user.id')
-                                    ->join('ledger_bank_account', 'finance.ledger_bank_account_id', 'ledger_bank_account.id')
-                                    ->join('bank', 'ledger_bank_account.bank_id', 'bank.id')
-                                    ->where('finance.ledger_id', '=', $ledgerId)
-                                    ->where('finance.reason', '=', 'WITHDRAW')
-                                    ->orderBy('finance.id', 'desc')
-                                    ->get();
+        $genericSummary = Finance::select('finance.id as id', 'finance.value as formattedValue', 'finance.compensation_date as date', 'bank.name as bank', 'ledger_bank_account.account as bankAccount')
+                                ->join('ledger', 'finance.ledger_id', '=', 'ledger.id')
+                                ->join($enviroment, 'ledger.'.$enviroment.'_id', '=', $enviroment.'.id')
+                                ->join('ledger_bank_account', 'finance.ledger_bank_account_id', 'ledger_bank_account.id')
+                                ->join('bank', 'ledger_bank_account.bank_id', 'bank.id')
+                                ->where('finance.ledger_id', '=', $ledgerId)
+                                ->where('finance.reason', '=', 'WITHDRAW')
+                                ->orderBy('finance.id', 'desc')
+                                ->get();
+        
+        foreach($genericSummary as $withdral) {
+            $withdral->formattedValue = currency_format($withdral->formattedValue);
         }
         return $genericSummary;
+    }
+
+
+    public static function addWithdraw($finance_withdraw_id, $finance_withdraw_tax_id)
+    {
+
+        $genericSummary = Finance::select('finance.id as id', 'finance.value as formattedValue', 'finance.compensation_date as date', 'bank.name as bank', 'ledger_bank_account.account as bankAccount')
+                                ->join('ledger', 'finance.ledger_id', '=', 'ledger.id')
+                                ->join($enviroment, 'ledger.'.$enviroment.'_id', '=', $enviroment.'.id')
+                                ->join('ledger_bank_account', 'finance.ledger_bank_account_id', 'ledger_bank_account.id')
+                                ->join('bank', 'ledger_bank_account.bank_id', 'bank.id')
+                                ->where('finance.ledger_id', '=', $ledgerId)
+                                ->where('finance.reason', '=', 'WITHDRAW')
+                                ->orderBy('finance.id', 'desc')
+                                ->get();
+        
+        return $genericSummary;
+    }
+
+    public static function addWithdrawReceiptAndConfirm($id, $picture_url) {
+        DB::table('withdraw')
+            ->where('id', '=', $id)
+            ->update(
+                [
+                    'bank_receipt_url' => $picture_url,
+                    'type' => 'concluded',
+                ]
+            );
+    }
+
+    public static function getGenericSettings() {
+
+        $keys = array(
+            "rem_company_name",
+            "rem_cpf_or_cnpj",
+            "rem_document",
+            "rem_agency",
+            "rem_agency_dv",
+            "rem_account",
+            "rem_account_dv",
+            "rem_bank_code",
+            "rem_agreement_number",
+            "rem_transfer_type"
+        );
+
+        $query = DB::table('settings')
+            ->select('key', 'value')
+            ->whereIn('key', $keys)
+            ->get();
+
+        return $query;
     }
 }
