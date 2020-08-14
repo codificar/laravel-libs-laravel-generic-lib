@@ -6,9 +6,8 @@
 Route::group(array('namespace' => 'Codificar\Generic\Http\Controllers'), function () {
     
     // (View painel admin)
-    Route::group(['prefix' => 'admin/libs', 'middleware' => 'auth.admin_api'], function () {
+    Route::group(['prefix' => 'admin/libs', 'middleware' => 'auth.admin'], function () {
         Route::get('/example_vuejs', array('as' => 'webAdminGeneric', 'uses' => 'GenericController@getExampleVuejs'));
-        Route::post('/example_vuejs/save', 'GenericController@saveExample');
     });
 
 });
@@ -16,9 +15,9 @@ Route::group(array('namespace' => 'Codificar\Generic\Http\Controllers'), functio
 // Rotas dos apps
 Route::group(array('namespace' => 'Codificar\Generic\Http\Controllers'), function () {
 
-    Route::group(['prefix' => 'libs/generic', 'middleware' => 'auth.provider_api:api'], function () {
+    Route::group(['prefix' => 'libs/generic'], function () {
 
-        Route::post('/example', 'GenericController@getAppApiExample');
+        Route::get('/example', 'GenericController@getAppApiExample');
     
     });
 
@@ -27,8 +26,8 @@ Route::group(array('namespace' => 'Codificar\Generic\Http\Controllers'), functio
 /**
  * Rota para permitir utilizar arquivos de traducao do laravel (dessa lib) no vue js
  */
-Route::get('/libs/lang.trans/{file}', function () {
-    $fileNames = explode(',', Request::segment(3));
+Route::get('/libs/generic/lang.trans/{file}', function () {
+    $fileNames = explode(',', Request::segment(4));
     $lang = config('app.locale');
     $files = array();
     foreach ($fileNames as $fileName) {

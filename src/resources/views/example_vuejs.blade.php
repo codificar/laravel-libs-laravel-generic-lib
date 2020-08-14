@@ -6,10 +6,10 @@
 <div class="row page-titles">
 	<div class="col-md-6 col-8 align-self-center">
 
-		<h3 class="text-themecolor m-b-0 m-t-0">{{ trans('libTans::generic.generic')}}</h3>
+		<h3 class="text-themecolor m-b-0 m-t-0">{{ trans('genericTrans::generic.generic')}}</h3>
 		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('libTans::generic.home') }}</a></li>
-			<li class="breadcrumb-item active">{{ trans('libTans::generic.settings') }}</li>
+			<li class="breadcrumb-item"><a href="javascript:void(0)">{{ trans('genericTrans::generic.home') }}</a></li>
+			<li class="breadcrumb-item active">{{ trans('genericTrans::generic.laravel_trans_example') }}</li>
 		</ol>
 	</div>
 </div>	
@@ -20,7 +20,7 @@
 	<div id="VueJs">
 		
 		<genericvuejs 
-			teste="{{ $teste }}"	
+			admins-list="{{ json_encode($admins_list )}}"	
 			
 		>
 		</genericvuejs>
@@ -34,7 +34,7 @@
 @stop
 
 @section('javascripts')
-<script src="/libs/lang.trans/generic"> </script> 
+<script src="/libs/generic/lang.trans/generic"> </script> 
 
 
 

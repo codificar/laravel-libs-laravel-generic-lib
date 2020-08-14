@@ -16,9 +16,8 @@ laravel-generic-lib é uma bilioteca genérica para o laravel. É um exemplo de 
 | Tipo  | Retorno | Rota  | Description |
 | :------------ |:---------------: |:---------------:| :-----|
 | `get` | View/html | /admin/libs/example_vuejs | Api retorna um exemplo de uma página feita em vue.js |
-| `post` | Api/json | /admin/libs/example_vuejs/save | Api que o vue.js irá consumir (ex: axios) para salvar algum dado no backend |
-| `post` | Api/json | /libs/generic/example | Api que os Apps poderão consumir | 
-| `get` | Api/json | /libs/lang.trans/{file} | Api retornará os arquivos de tradução do Laravel para serem usados dentro do vue.js |
+| `get` | Api/json | /libs/generic/example | Api que os Apps poderão consumir | 
+| `get` | Api/json | /libs/generic/lang.trans/{file} | Api retornará os arquivos de tradução do Laravel para serem usados dentro do vue.js |
 
 
 # Estrutura
