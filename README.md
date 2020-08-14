@@ -14,8 +14,8 @@ laravel-generic-lib é uma bilioteca genérica para o laravel. É um exemplo de 
 - Repare no arquivo GenericServiceProvider.php: 
 ```
 $this->publishes([
-            __DIR__.'/../public/js' => public_path('vendor/codificar/generic'),
-        ], 'public_vuejs_libs'); 
+    __DIR__.'/../public/js' => public_path('vendor/codificar/generic'),
+], 'public_vuejs_libs'); 
 ```
 - Aqui está sendo copiado os arquivos da pasta public/js da biblioteca e jogado para a pasta public/vendor/codificar/generic do projeto
 - Abaixo, na parte de instalação, será mostrado como colocar o script no composer.json do projeto para fazer as mudanças sempre que rodar composer dump-autoload -o
