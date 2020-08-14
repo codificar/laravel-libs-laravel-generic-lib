@@ -10,7 +10,15 @@ laravel-generic-lib é uma bilioteca genérica para o laravel. É um exemplo de 
 -- Rotas do painel : `localhost:8000/admin/libs/nomedarota`, e `localhost:8000/corp/libs/nomedarota` ...
 - Preferencialmente, ao criar migrations, verificar se uma coluna, tabela ou row, já existe. Somente se não existir deverá ser criado.
 - Deverá ser instalado o vue.js dentro da biblioteca
--  Gerar os arquivos minificados do vue dentro da própria biblioteca do laravel, e utilizar o `publishes` do laravel para colocar esses arquivos dentro da pasta public do projeto que for instalar essa lib. Depois é só adicionar o script no composer.json para quando rodar o comando `composer dump-autoload -o`, ele roda o publishes e copia esses arquivos minificados do vue da bilioteca e jogo dentro do projeto. É importante ficar atento ao tamanho do arquivo, evite utilizar modulos desnecessários no `package.json` e no fim, quando for da commit nas suas mudanças, rode `npm run prod` para gerar os arquivos minificados
+-  Gerar os arquivos minificados do vue dentro da própria biblioteca do laravel, e utilizar o `publishes` do laravel para colocar esses arquivos dentro da pasta public do projeto que for instalar essa lib. Depois é só adicionar o script no composer.json para quando rodar o comando `composer dump-autoload -o`, ele roda o publishes e copia esses arquivos minificados do vue da bilioteca e jogo dentro do projeto. É importante ficar atento ao tamanho do arquivo, evite utilizar modulos desnecessários no `package.json` e no fim, quando for da commit nas suas mudanças, rode `npm run prod` para gerar os arquivos minificados.
+- Repare no arquivo GenericServiceProvider.php: 
+```
+$this->publishes([
+            __DIR__.'/../public/js' => public_path('vendor/codificar/generic'),
+        ], 'public_vuejs_libs'); 
+```
+- Aqui está sendo copiado os arquivos da pasta public/js da biblioteca e jogado para a pasta public/vendor/codificar/generic do projeto
+- Abaixo, na parte de instalação, será mostrado como colocar o script no composer.json do projeto para fazer as mudanças sempre que rodar composer dump-autoload -o
 
 # Rotas
 | Tipo  | Retorno | Rota  | Description |
@@ -21,12 +29,12 @@ laravel-generic-lib é uma bilioteca genérica para o laravel. É um exemplo de 
 
 
 # Estrutura
- ![alt text](https://i.imgur.com/oRH5uh6.png)
+ ![alt text](https://i.imgur.com/PsahJHb.jpg)
 
 
 # Instalação
 
-- In root of your Laravel app in the composer.json add this code to clone the project:
+- Adiciona o projeto no composer.json (direto do gitlab)
 
 ```
 
@@ -54,34 +62,15 @@ laravel-generic-lib é uma bilioteca genérica para o laravel. É um exemplo de 
 
 ```
 
-- Add 
+- Procure o psr-4 do autoload e adione a pasta src da sua biblioteca
+```
+"psr-4": {
+    // Adicionar aqui
+    "Codificar\\Generic\\": "vendor/codificar/generic/src",
+}
 ```
 
-"autoload": {
-        "classmap": [
-            "database/seeds"
-        ],
-        "psr-4": {
-            // Add your Lib here
-            "Codificar\\Generic\\": "vendor/codificar/generic/src",
-            "App\\": "app/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            // Add your Lib here
-            "Codificar\\Generic\\": "vendor/codificar/generic/src",
-            "Tests\\": "tests/"
-        }
-    },
-```
-- Dump the composer autoloader
-
-```
-composer dump-autoload -o
-```
-
-- Next, we need to add our new Service Provider in our `config/app.php` inside the `providers` array:
+- Agora, precisamos adicionar o novo Service Provider no arquivo `config/app.php` dentro do array `providers`:
 
 ```
 'providers' => [
@@ -90,14 +79,29 @@ composer dump-autoload -o
             Codificar\Generic\GenericServiceProvider::class,
         ],
 ```
-- Migrate the database tables
+- Precisamos copiar os arquivos da pasta public da biblioteca para a pasta public do projeto. Para isso adicione dentro do composer.json, no objeto `"scripts": {`. Repare que especificamos a tag. Nesse caso é public_vuejs_libs. Essa tag é a mesma que fica no arquivo GenericServiceProvider.php da biblioteca. Não tem problema várias bibliotecas utilizarem a mesma tag. Inclusive é bom que todos os componentes utilizem a mesma tag, para não ter que ficar adicionando isso a cada novo projeto que precisar da sua lib.
+```
+"post-autoload-dump": [
+	"@php artisan vendor:publish --tag=public_vuejs_libs --force"
+]
+```
+
+- Dump o composer autoloader
+
+```
+composer dump-autoload -o
+```
+
+- Rode as migrations
 
 ```
 php artisan migrate
 ```
 
-And finally, start the application by running:
+Por fim, teste se tudo está ok e acesse as rotas de exemplo:
 
 ```
 php artisan serve
 ```
+View: http://localhost:8000/admin/libs/example_vuejs
+Api: http://localhost:8000/libs/generic/example
